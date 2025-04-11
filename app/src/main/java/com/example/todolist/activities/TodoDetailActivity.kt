@@ -1,10 +1,13 @@
 package com.example.todolist.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +22,7 @@ import java.util.Date
 class TodoDetailActivity : AppCompatActivity() {
     private lateinit var titleEditText: EditText
     private lateinit var descriptionEditText: EditText
-    private lateinit var createdAtText: EditText
+    private lateinit var createDateText: TextView
     private lateinit var completedCheckBox: CheckBox
     private lateinit var saveButton: Button
     private lateinit var deleteButton: Button
@@ -33,23 +36,27 @@ class TodoDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_todo_detail)
 
-        titleEditText = findViewById(R.id.titleEditText)
+        titleEditText = findViewById(R.id.nameEditText)
         descriptionEditText = findViewById(R.id.descriptionEditText)
         completedCheckBox = findViewById(R.id.completedCheckBox)
         saveButton = findViewById(R.id.saveButton)
         deleteButton = findViewById(R.id.deleteButton)
+        createDateText = findViewById(R.id.createDateTextView)
 
         val todoId = intent.getIntExtra("TODO_ID", -1)
 
         if (todoId != -1) {
-            deleteButton.visibility = View.VISIBLE
+            deleteButton.isEnabled = true
 
             lifecycleScope.launchWhenCreated {
                 viewModel.getTodoById(todoId).collectLatest { todo ->
-                    currentTodo = todo
-                    titleEditText.setText(todo.name)
-                    descriptionEditText.setText(todo.description)
-                    completedCheckBox.isChecked = todo.isCompleted
+                    if (todo != null) {
+                        currentTodo = todo
+                        titleEditText.setText(todo.name)
+                        descriptionEditText.setText(todo.description)
+                        completedCheckBox.isChecked = todo.isCompleted
+                        createDateText.text = "Created: ${todo.createdAt}"
+                    }
                 }
             }
         }
@@ -85,8 +92,6 @@ class TodoDetailActivity : AppCompatActivity() {
             description = description,
             isCompleted = isCompleted,
             priority = 0,
-            deadLineDate = Date(0),
-            id=-1
         )
 
         if (currentTodo == null) {

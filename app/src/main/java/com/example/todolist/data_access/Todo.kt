@@ -8,7 +8,7 @@ import java.util.Date
 @Entity(tableName = "todo")
 @TypeConverters(DateConverter::class)
 data class Todo (
-    @PrimaryKey(autoGenerate = true) val id: Int = -1,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name:String,
     val description:String,
     val priority: Int = 0,

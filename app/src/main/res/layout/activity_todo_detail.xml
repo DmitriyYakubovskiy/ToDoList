@@ -12,16 +12,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Title"
+            android:text="Name"
             android:textStyle="bold"/>
 
         <EditText
-            android:id="@+id/titleEditText"
+            android:id="@+id/nameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="16dp"
-            android:hint="Enter title"
+            android:hint="Enter name"
             android:inputType="textCapSentences"/>
 
         <TextView
@@ -59,6 +59,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Delete"
-            android:visibility="gone"/>
+            android:enabled="false"/>
+
+        <TextView
+            android:id="@+id/createDateTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="12sp"
+            android:textColor="#808080"/>
     </LinearLayout>
 </ScrollView>

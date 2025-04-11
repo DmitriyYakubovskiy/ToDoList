@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.data_access.Todo
+import java.text.SimpleDateFormat
+import java.util.TimeZone
 
 class TodoAdapter(
     private val onItemClicked: (Todo) -> Unit,
@@ -27,8 +29,8 @@ class TodoAdapter(
     class TodoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
         private val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionTextView)
+        private val createDate: TextView = itemView.findViewById(R.id.createDateTextView)
         private val completedCheckbox: CheckBox = itemView.findViewById(R.id.completedCheckbox)
-
         fun bind(
             todo: Todo,
             onItemClicked: (Todo) -> Unit,
@@ -37,6 +39,7 @@ class TodoAdapter(
             titleTextView.text = todo.name
             descriptionTextView.text = todo.description
             completedCheckbox.isChecked = todo.isCompleted
+            createDate.text = SimpleDateFormat("MMMM dd, yyyy HH:mm:ss").format(todo.createdAt)
 
             itemView.setOnClickListener {
                 onItemClicked(todo)
