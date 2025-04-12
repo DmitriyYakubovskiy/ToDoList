@@ -17,7 +17,11 @@ class TodoRepository(private val todoDao: TodoDao) {
         todoDao.delete(todo)
     }
 
-    fun getTodoById(id: Int): Flow<Todo> {
+    suspend fun getById(id: Int): Todo {
         return todoDao.getById(id)
+    }
+
+    fun getByIdFlow(id: Int): Flow<Todo> {
+        return todoDao.getByIdFlow(id)
     }
 }

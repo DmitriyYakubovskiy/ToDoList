@@ -24,7 +24,10 @@ interface TodoDao{
     fun getAll(): Flow<List<Todo>>
 
     @Query("SELECT * FROM todo WHERE id = :id")
-    fun getById(id: Int): Flow<Todo>
+    suspend fun getById(id: Int): Todo
+
+    @Query("SELECT * FROM todo WHERE id = :id")
+    fun getByIdFlow(id: Int): Flow<Todo>
 
     @Query("SELECT * FROM todo WHERE isCompleted = 0 AND deadLineDate < :currentDate ORDER BY deadLineDate ASC")
     fun getOverdueTodos(currentDate: Date): Flow<List<Todo>>

@@ -14,6 +14,9 @@ import com.example.todolist.TodoViewModel
 import com.example.todolist.TodoViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -22,24 +25,35 @@ class MainActivity : AppCompatActivity() {
         TodoViewModelFactory((application as TodoApplication).repository)
     }
 
+    private val adapter = TodoAdapter(
+        onItemClicked = { todo ->
+            val intent = Intent(this, TodoDetailActivity::class.java).apply {
+                putExtra("TODO_ID", todo.id)
+            }
+            startActivity(intent)
+        },
+        onCheckboxClicked = { todo, isChecked ->
+            lifecycleScope.launch {
+                viewModel.getByIdFlow(todo.id)
+                    .take(1)
+                    .collect { freshTodo ->
+                        freshTodo?.let {
+                            viewModel.update(it.copy(
+                                isCompleted = isChecked,
+                                updatedAt = Date()
+                            ))
+                        }
+                    }
+            }
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         recyclerView = findViewById(R.id.recyclerView)
         fab = findViewById(R.id.fab)
-
-        val adapter = TodoAdapter(
-            onItemClicked = { todo ->
-                val intent = Intent(this, TodoDetailActivity::class.java).apply {
-                    putExtra("TODO_ID", todo.id)
-                }
-                startActivity(intent)
-            },
-            onCheckboxClicked = { todo, isChecked ->
-                viewModel.update(todo.copy(isCompleted = isChecked))
-            }
-        )
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
@@ -51,8 +65,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         fab.setOnClickListener {
-            val intent = Intent(this, TodoDetailActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, TodoDetailActivity::class.java))
         }
     }
 }

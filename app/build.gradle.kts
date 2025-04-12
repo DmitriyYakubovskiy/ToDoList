@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.media3.common.ktx)
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.coordinatorlayout)

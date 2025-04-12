@@ -1,13 +1,10 @@
 package com.example.todolist.activities
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -20,8 +17,8 @@ import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
 class TodoDetailActivity : AppCompatActivity() {
-    private lateinit var titleEditText: EditText
-    private lateinit var descriptionEditText: EditText
+    private lateinit var nameText: EditText
+    private lateinit var descriptionText: EditText
     private lateinit var createDateText: TextView
     private lateinit var completedCheckBox: CheckBox
     private lateinit var saveButton: Button
@@ -36,8 +33,8 @@ class TodoDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_todo_detail)
 
-        titleEditText = findViewById(R.id.nameEditText)
-        descriptionEditText = findViewById(R.id.descriptionEditText)
+        nameText = findViewById(R.id.nameEditText)
+        descriptionText = findViewById(R.id.descriptionEditText)
         completedCheckBox = findViewById(R.id.completedCheckBox)
         saveButton = findViewById(R.id.saveButton)
         deleteButton = findViewById(R.id.deleteButton)
@@ -49,11 +46,11 @@ class TodoDetailActivity : AppCompatActivity() {
             deleteButton.isEnabled = true
 
             lifecycleScope.launchWhenCreated {
-                viewModel.getTodoById(todoId).collectLatest { todo ->
+                viewModel.getByIdFlow(todoId).collectLatest { todo ->
                     if (todo != null) {
                         currentTodo = todo
-                        titleEditText.setText(todo.name)
-                        descriptionEditText.setText(todo.description)
+                        nameText.setText(todo.name)
+                        descriptionText.setText(todo.description)
                         completedCheckBox.isChecked = todo.isCompleted
                         createDateText.text = "Created: ${todo.createdAt}"
                     }
@@ -74,24 +71,25 @@ class TodoDetailActivity : AppCompatActivity() {
     }
 
     private fun saveTodo() {
-        val title = titleEditText.text.toString()
-        val description = descriptionEditText.text.toString()
+        val name = nameText.text.toString()
+        val description = descriptionText.text.toString()
         val isCompleted = completedCheckBox.isChecked
 
-        if (title.isBlank()) {
-            titleEditText.error = "Title cannot be empty"
+        if (name.isBlank()) {
+            nameText.error = "Title cannot be empty"
             return
         }
 
         val todo = currentTodo?.copy(
-            name = title,
-            description = description,
-            isCompleted = isCompleted
-        ) ?: Todo(
-            name = title,
+            name = name,
             description = description,
             isCompleted = isCompleted,
-            priority = 0,
+            updatedAt = Date(System.currentTimeMillis())
+        ) ?: Todo(
+            name = name,
+            description = description,
+            isCompleted = isCompleted,
+            priority = 0
         )
 
         if (currentTodo == null) {
